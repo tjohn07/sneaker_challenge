@@ -44,6 +44,29 @@ SELECT LastName FROM [Employees] WHERE EmployeeID = 4;
 What product was ordered the most by customers in Germany?
 
 CREATE VIEW german_cust AS
-SELECT CustomerID
-FROM Customers
-WHERE Country='Germany';
+SELECT c.CustomerID
+FROM Customers as c
+WHERE c.Country = 'Germany';
+
+CREATE VIEW german_orders AS
+SELECT *
+FROM german_cust
+INNER JOIN Orders as o
+ON german_cust.CustomerID = o.CustomerID;
+
+CREATE VIEW german_products AS
+SELECT *
+FROM german_orders
+INNER JOIN OrderDetails as o
+ON german_orders.OrderID = o.OrderID;
+
+SELECT MAX (mycount), ProductID
+FROM (SELECT ProductID,COUNT(ProductID) mycount
+FROM german_products
+GROUP BY ProductID);
+
+* ProductID = 31
+
+SELECT ProductName FROM Products WHERE ProductID = 31;
+
+* Answer: Gorgonzola Telino
